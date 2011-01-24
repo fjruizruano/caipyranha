@@ -2,14 +2,6 @@
 
 #### Trabajo por hacer
 #
-# Cortar nombres hasta el primer espacio --> HECHO
-# Argumentos de la consola --> HECHO
-# Lectura de etiquetas para MERGE --> HECHO
-# Búsqueda de primers por alineamiento local o polilinker del vector -- > HECHO
-# Blastear el alineamiento y dar la salida --> HECHO
-# Filogenia con phylipnew --> HECHO
-# Informe de errores --> HECHO
-#
 # Percentil 99/95 para eliminar singletons [ver numpy array]
 #	mayus = open(url2+"/alignment_mayus.fas" ,"r")
 #	alignment = AlignIO.read(mayus, "fasta")
@@ -17,7 +9,6 @@
 #		print a.seq
 #
 # Abrir alineamientos con clustalx
-# Lectura de merger
 # Conversor MEGA
 # rawinput de la url
 # alinear processed and processed_contig
@@ -85,7 +76,7 @@ def merger():
 			seq1 = record[a]
 			seq2 = record[b]
 
-			if seq1.id[0:3] == seq2.id[0:3]:
+			if seq1.id[0:5] == seq2.id[0:5]:
 
 				open_seq1 = open(url2 + "/seq1.fas","w")
 				open_seq1.write("%s" % (">"+ seq1.id +"\n"+ seq1.seq))
@@ -95,7 +86,8 @@ def merger():
 				open_seq2.write("%s" % (">"+ seq2.id +"\n"+ seq2.seq))
 				open_seq2.close()
 
-				comando_merger = str("merger -asequence " + url2 + "/seq1.fas -bsequence " + url2 + "/seq2.fas -outfile " + url2 + "/contig.merger -outseq " + url2 + "/contig.fas")
+	#			comando_merger = str("merger -asequence " + url2 + "/seq1.fas -bsequence " + url2 + "/seq2.fas -outfile " + url2 + "/contig.merger -outseq " + url2 + "/contig.fas")
+				comando_merger = str("megamerger -asequence " + url2 + "/seq1.fas -bsequence " + url2 + "/seq2.fas -wordsize 20 -outfile " + url2 + "/contig.merger -outseq " + url2 + "/contig.fas")
 				run_command(comando_merger)
 
 				overlap = open(url2 + "/contig.fas", "r")
@@ -107,9 +99,10 @@ def merger():
 				os.remove(url2 + "/contig.merger")
 				os.remove(url2 + "/contig.fas")
 
-	salida.close()
+#			elif:
+#				seq1.
 
-#	alinear("processed_contig.fas", "alignment_contig.fas")
+	salida.close()
 
 ##### Función BLAST
 
@@ -160,6 +153,7 @@ def alinear():
 		open(url2 + "/processed_contig.fas", "r")
 		aliin = "processed_contig.fas"
 		aliout = "alignment_contig.fas"
+
 	except:
 		open(url2 + "/processed.fas", "r")
 		aliin = "processed.fas"
@@ -249,8 +243,8 @@ def filogenia():
 
 # Indicar la ruta en que se encuentran la secuencia a procesar
 
-url = "/home/fruano/science/programs/pylab/caipyranha/1"
-#url = "/home/fruano/pylab/caipyranha/2"
+#url = "/home/fruano/science/programs/pylab/caipyranha/1"
+url = "/home/fruano/pylab/caipyranha/2"
 
 home = str(commands.getoutput("echo $HOME"))
 
@@ -347,14 +341,14 @@ def algoritmo(sequencia):
 	localreverse = pairwise2.align.localms(seq, primer_reverse, 2, -1, -1, -.1)
 	bestreverse = localreverse[0]
 
-	if bestforward[2] > len(primer_forward)*2*0.9:
+	if bestforward[2] > len(primer_forward)*2*0.95:
 #		print bestforward[3]
-		b = 600
+		b = 650
 		a = bestforward[3]
 		its_seq = seq[a:b]
-	elif bestreverse[2] > len(primer_reverse)*2*0.9:
+	elif bestreverse[2] > len(primer_reverse)*2*0.95:
 #		print bestreverse[3]
-		b = 600
+		b = 650
 		a = bestreverse[3]
 		its_seq = seq[a:b]
 		its_seq = Seq(its_seq)
@@ -368,8 +362,8 @@ def algoritmo(sequencia):
 	bestforward[3] == -1
 	bestreverse[3] == -1
 
-	if its_seq != "N":
-		salida.write("%s" % (name + its_seq + "\n\n"))
+#	if its_seq != "N":
+	salida.write("%s" % (name + its_seq + "\n\n"))
 
 
 
@@ -450,5 +444,5 @@ comando_borrar_files = "rm " + url_temp_files
 run_command(comando_borrar_folders)
 run_command(comando_borrar_files)
 
-print "\nFINALIZADO\n"
+print "\nCaipyranha ha finalizado la tarea. Gracias por utilizarlo. (o'.'o)\n"
 
